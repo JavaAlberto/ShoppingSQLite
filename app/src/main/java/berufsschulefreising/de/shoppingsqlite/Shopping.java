@@ -4,6 +4,8 @@ package berufsschulefreising.de.shoppingsqlite;
  * Created by Albrecht on 22.10.2016.
  */
 
+// Data Object
+
 public class Shopping
 {
 
