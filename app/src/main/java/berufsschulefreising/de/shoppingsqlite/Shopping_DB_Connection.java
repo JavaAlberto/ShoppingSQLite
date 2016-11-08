@@ -18,6 +18,7 @@ public class Shopping_DB_Connection
 
     private SQLiteDatabase database;
     private ShoppingSQLiteHelper dbHelper;
+   // Spaltenbezeichnungen
     private String[] columns = {
             ShoppingSQLiteHelper.COLUMN_ID,
             ShoppingSQLiteHelper.COLUMN_PRODUCT,
@@ -44,35 +45,56 @@ public class Shopping_DB_Connection
         Log.d(LOG_TAG, "Datenbank mit Hilfe des DbHelpers geschlossen.");
     }
 
+    // Daten zum Eintrag in DB werden übergeben
     public Shopping createShopping(String product, int quantity)
     {
+        // Content values > zu Einfügen in SQLiteDB
+        // put:  key - value
         ContentValues values = new ContentValues();
         values.put(ShoppingSQLiteHelper.COLUMN_PRODUCT, product);
         values.put(ShoppingSQLiteHelper.COLUMN_QUANTITY, quantity);
 
+        // Eintrag in DB:
+        // zurückgegeben wird eine eindeutige ID des Datensatzes
         long insertId = database.insert(ShoppingSQLiteHelper.TABLE_SHOPPING_LIST, null, values);
 
+        // Suche in der DB ("query")
+        // Der Rückgabewert ist eine Art Zeiger auf die Zeile der DB-Tabelle
+        /*
+        Paramter 1: Tabellenname
+        Patameter 2: Namen der TAbellenspalten die von der Suchanfrage zurückgegeben wwrden soll
+        Parameter 3: Such-String > enthält den Namen der zu vergleichenden Spalte und testet
+        mit dem = - Operator, ob die Werte den vorgegebenen Daten entsprechen
+        Beispiel:  _id =6
+        Ist der Suchstring null, werden alle Datensätze der Tabelle zurückgeliefert
+
+        Zurückgegeben wird ein spiezielles Data Access Objekt (DAO) vom Typ Cursor)
+        Mit diesem Cursor können die Datensätze durchlaufen werden und es kann auf ihre
+        inneren Werte zugegriffen werden
+         */
+        // http://www.willemer.de/informatik/android/prgsql.htm
         Cursor cursor = database.query(ShoppingSQLiteHelper.TABLE_SHOPPING_LIST,
                 columns, ShoppingSQLiteHelper.COLUMN_ID + "=" + insertId,
                 null, null, null, null);
-
+        // Wechsel zum ersten datensatz
         cursor.moveToFirst();
-        Shopping shoppingMemo = cursorToShopping(cursor);
+        Shopping shopping = cursorToShopping(cursor);
         cursor.close();
 
-        return shoppingMemo;
+        return shopping;
     }
     private Shopping cursorToShopping(Cursor cursor)
     {
+        //  liefert den Index der Spalte zurück:
         int idIndex = cursor.getColumnIndex(ShoppingSQLiteHelper.COLUMN_ID);
         int idProduct = cursor.getColumnIndex(ShoppingSQLiteHelper.COLUMN_PRODUCT);
         int idQuantity = cursor.getColumnIndex(ShoppingSQLiteHelper.COLUMN_QUANTITY);
         String product = cursor.getString(idProduct);
         int quantity = cursor.getInt(idQuantity);
         long id = cursor.getLong(idIndex);
-        Shopping shoppingMemo = new Shopping(product, quantity, id);
+        Shopping shopping = new Shopping(product, quantity, id);
 
-        return shoppingMemo;
+        return shopping;
 
     }
 
