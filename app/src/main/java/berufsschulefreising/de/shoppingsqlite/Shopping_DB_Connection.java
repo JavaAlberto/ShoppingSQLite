@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Albrecht on 22.10.2016.
  */
@@ -83,6 +86,7 @@ public class Shopping_DB_Connection
 
         return shopping;
     }
+    // DB auslesen und ausgelesene Daten in Objekten ablegen
     private Shopping cursorToShopping(Cursor cursor)
     {
         //  liefert den Index der Spalte zurück:
@@ -96,6 +100,30 @@ public class Shopping_DB_Connection
 
         return shopping;
 
+    }
+
+    public List<Shopping> getAllShoppingMemos() {
+        List<Shopping> shoppingList = new ArrayList<>();
+        // Ist der Suchstring 3 null, werden alle Datensätze der Tabelle zurückgeliefert
+        Cursor cursor = database.query(ShoppingSQLiteHelper.TABLE_SHOPPING_LIST,
+                columns, null, null, null, null, null);
+
+        cursor.moveToFirst();
+        Shopping shopping;
+
+        while(!cursor.isAfterLast())
+        {
+            // Objekt aus Datensatz bilden über Methodenaufruf
+            shopping = cursorToShopping(cursor);
+            // Objekt der Liste hinzufügen
+            shoppingList.add(shopping);
+            Log.d(LOG_TAG, "ID: " + shopping.getId() + ", Inhalt: " + shopping.toString());
+            cursor.moveToNext();
+        }
+        // Wichtig : Schließen des Cursors !!
+        cursor.close();
+        // Liste mit allen Shopping-Objekten wird zurückgegeben
+        return shoppingList;
     }
 
 }
