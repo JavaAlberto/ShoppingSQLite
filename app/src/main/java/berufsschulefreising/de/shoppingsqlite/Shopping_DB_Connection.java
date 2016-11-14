@@ -125,5 +125,14 @@ public class Shopping_DB_Connection
         // Liste mit allen Shopping-Objekten wird zurückgegeben
         return shoppingList;
     }
+    public void deleteShopping(Shopping shopping) {
+        long id = shopping.getId();
 
-}
+        database.delete(ShoppingSQLiteHelper.TABLE_SHOPPING_LIST,
+                ShoppingSQLiteHelper.COLUMN_ID + "=" + id,
+                null);
+
+        Log.d(LOG_TAG, "Eintrag gelöscht! ID: " + id + " Inhalt: " + shopping.toString());
+    }
+
+    }
